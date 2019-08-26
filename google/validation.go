@@ -28,6 +28,10 @@ const (
 	// ${PROJECT_ID}-compute@developer.gserviceaccount.com where PROJECT_ID is an int64 (max 20 digits)
 	ComputeServiceAccountNameRegex = "[0-9]{1,20}-compute@developer.gserviceaccount.com"
 
+	// Format of CloudBuild service accounts created by Google
+	// ${PROJECT-ID}@cloudbuild.gserviceaccount.com" where PROJECT_ID is an int64 (max 20 digits)
+	CloudBuildServiceAccountNameRegex = "[0-9]{1,20}@cloudbuild.gserviceaccount.com"
+
 	// https://cloud.google.com/iam/docs/understanding-custom-roles#naming_the_role
 	IAMCustomRoleIDRegex = "^[a-zA-Z0-9_\\.]{3,64}$"
 )
@@ -43,6 +47,7 @@ var (
 	PossibleServiceAccountNames   = []string{
 		ServiceDefaultAccountNameRegex,
 		ComputeServiceAccountNameRegex,
+		CloudBuildServiceAccountNameRegex,
 		CreatedServiceAccountNameRegex,
 	}
 	ServiceAccountLinkRegex = ServiceAccountLinkRegexPrefix + "(" + strings.Join(PossibleServiceAccountNames, "|") + ")"

@@ -7,14 +7,32 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
+func expandServiceAccountName(d TerraformResourceData, config *Config) (string, error) {
+	accountId := d.Get("account_id").(string)
+	serviceAccountId := d.Get("service_account_id").(string)
+
+	if accountId != "" && serviceAccountId == "" {
+		return serviceAccountFQN(accountId, d, config)
+	} else if accountId == "" && serviceAccountId != "" {
+		return serviceAccountId, nil
+	} else {
+		return "", fmt.Errorf("exactly one of account_id or service_account_id must be provided")
+	}
+}
+
 func dataSourceGoogleServiceAccount() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceGoogleServiceAccountRead,
 		Schema: map[string]*schema.Schema{
 			"account_id": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ValidateFunc: validateRFC1035Name(6, 30),
+			},
+			"service_account_id": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateRegexp(ServiceAccountLinkRegex),
 			},
 			"project": {
 				Type:     schema.TypeString,
@@ -43,7 +61,7 @@ func dataSourceGoogleServiceAccount() *schema.Resource {
 func dataSourceGoogleServiceAccountRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	serviceAccountName, err := serviceAccountFQN(d.Get("account_id").(string), d, config)
+	serviceAccountName, err := expandServiceAccountName(d, config)
 	if err != nil {
 		return err
 	}

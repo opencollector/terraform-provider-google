@@ -17,6 +17,7 @@ the official [API](https://cloud.google.com/compute/docs/access/service-accounts
 ```hcl
 data "google_service_account" "object_viewer" {
   account_id = "object-viewer"
+  # service_account_id = "object-viewer@example.gserviceaccount.com"
 }
 ```
 
@@ -44,7 +45,9 @@ resource "kubernetes_secret" "google-application-credentials" {
 
 The following arguments are supported:
 
-* `account_id` - (Required) The Service account id.  (This is the part of the service account's email field that comes before the @ symbol.)
+* `account_id` - (Optional) Portion of the service account id, which comes before the @ symbol. Either `account_id` or `service_account_id` must be provided.
+
+* `service_account_id` - (Optional) The fully-qualified service account id. Either `account_id` or `service_account_id` must be provided.
 
 * `project` - (Optional) The ID of the project that the service account is present in.
     Defaults to the provider project configuration.
